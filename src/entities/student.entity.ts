@@ -1,17 +1,18 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { Enrollment } from './enrollment.entity';
 
-@Entity()
-export class Students {
+@Entity({ name: 'students' })
+export class Student {
   @PrimaryGeneratedColumn()
   id: number;
 
   @Column()
   full_name: string;
 
-  @Column()
+  @Column({ type: 'date' })
   date_of_birth: Date;
 
-  @Column()
+  @Column({ type: 'enum', enum: ['Male', 'Female', 'Other'] })
   gender: 'Male' | 'Female' | 'Other';
 
   @Column({ nullable: true })
@@ -28,4 +29,7 @@ export class Students {
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   created_at: Date;
+
+  @OneToMany(() => Enrollment, (enrollment) => enrollment.student)
+  enrollments: Enrollment[];
 }
