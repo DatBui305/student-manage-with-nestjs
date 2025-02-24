@@ -6,8 +6,15 @@ import { TeachersRepository } from '../repositories/teachers.repository';
 export class TeachersService {
   constructor(private readonly teachersRepository: TeachersRepository) {}
 
-  async getAllTeachers(): Promise<Teacher[]> {
-    return this.teachersRepository.findAll();
+  async getAllTeachers(
+    page: number,
+    limit: number,
+  ): Promise<{
+    data: Teacher[];
+    total: number;
+    page: number;
+  }> {
+    return this.teachersRepository.findAll(page, limit);
   }
 
   async getTeacherById(id: number): Promise<Teacher> {

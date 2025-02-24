@@ -7,8 +7,15 @@ import { Student } from '../../entities/student.entity';
 export class StudentsService {
   constructor(private readonly studentsRepository: StudentsRepository) {}
 
-  async getAllStudents(): Promise<Student[]> {
-    return this.studentsRepository.findAll();
+  async getAllStudents(
+    page: number,
+    limit: number,
+  ): Promise<{
+    data: Student[];
+    total: number;
+    page: number;
+  }> {
+    return this.studentsRepository.findAll(page, limit);
   }
 
   async getStudentById(id: number): Promise<Student> {
@@ -27,7 +34,10 @@ export class StudentsService {
     id: number,
     updateData: Partial<Student>,
   ): Promise<Student> {
-    await this.getStudentById(id); // Kiểm tra sinh viên tồn tại trước khi cập nhật
+    if (id !== updateData.id) {
+      throw new Error('ID in request must match ID in data');
+    }
+    await this.getStudentById(id);
     return this.studentsRepository.updateStudent(id, updateData);
   }
 
