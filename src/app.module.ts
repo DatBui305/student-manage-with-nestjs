@@ -11,6 +11,8 @@ import { TeachersModule } from './common/modules/teachers.module';
 import { EnrollmentsModule } from './common/modules/enrollments.module';
 import { RedisModule } from './common/modules/redis.module';
 import { StudentsModule } from './common/modules/students.module';
+import { AuthModule } from 'src/auth/auth.module';
+import { Admin } from 'src/entities/admin.entity';
 
 @Module({
   imports: [
@@ -21,8 +23,8 @@ import { StudentsModule } from './common/modules/students.module';
       username: 'postgres',
       password: '30052003',
       database: 'student_management',
-      entities: [Student, Class, Enrollment, Teacher, Subject],
-      synchronize: false,
+      entities: [Student, Class, Enrollment, Teacher, Subject, Admin],
+      synchronize: true,
     }),
     StudentsModule,
     ClassesModule,
@@ -30,6 +32,7 @@ import { StudentsModule } from './common/modules/students.module';
     TeachersModule,
     EnrollmentsModule,
     RedisModule,
+    AuthModule,
   ],
 })
 export class AppModule {}

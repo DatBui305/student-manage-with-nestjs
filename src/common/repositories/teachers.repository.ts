@@ -8,33 +8,50 @@ import { Cache, CACHE_MANAGER } from '@nestjs/cache-manager';
 @Injectable()
 export class TeachersRepository {
   private readonly CACHE_KEY = 'all_teachers';
+  private readonly CACHE_KEY_PREFIX = 'teachers_page_';
   constructor(
     @InjectRepository(Teacher)
     private teachersRepository: Repository<Teacher>,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 
-  async findAll(): Promise<Teacher[]> {
+  async findAll(
+    page: number = 1,
+    limit: number = 10,
+  ): Promise<{
+    data: Teacher[];
+    total: number;
+    page: number;
+  }> {
     try {
-      const cachedTeachers = await this.cacheManager.get<Teacher[]>(
-        this.CACHE_KEY,
-      );
-      if (cachedTeachers) {
+      const cacheKey = `${this.CACHE_KEY_PREFIX}${page}_${limit}`;
+      const cachedData = await this.cacheManager.get<{
+        data: Teacher[];
+        total: number;
+      }>(cacheKey);
+      if (cachedData) {
         console.log('Fetching from cache');
-        return cachedTeachers;
+        return { ...cachedData, page };
       }
       console.log('Fetching from database');
-      const teachers = await this.teachersRepository.find();
+      const [teachers, total] = await this.teachersRepository.findAndCount({
+        skip: (page - 1) * limit,
+        take: limit,
+      });
       try {
-        await this.cacheManager.set(this.CACHE_KEY, teachers, 60 * 1000);
+        await this.cacheManager.set(
+          cacheKey,
+          { data: teachers, total },
+          60 * 1000,
+        );
         console.log('Cached teacher successfully ');
       } catch (error) {
         console.log('Fail to cached teachers', error.message);
       }
-      return teachers;
+      return { data: teachers, total, page };
     } catch (error) {
       console.log('Failed to get teaches', error.message);
-      return await this.teachersRepository.find();
+      return { data: [], total: 0, page };
     }
   }
   async findById(id: number): Promise<Teacher | null> {

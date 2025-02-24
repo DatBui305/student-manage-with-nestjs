@@ -7,40 +7,55 @@ import { Cache, CACHE_MANAGER } from '@nestjs/cache-manager';
 @Injectable()
 export class EnrollmentsRepository {
   private readonly CACHE_KEY = 'all_enrollments';
-
+  private readonly CACHE_KEY_PREFIX = 'entrollment_page_';
   constructor(
     @InjectRepository(Enrollment)
     private enrollmentsRepository: Repository<Enrollment>,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
-
-  /**
-   * Get all enrollments with caching
-   */
-  async findAll(): Promise<Enrollment[]> {
+  async findAll(
+    page: number = 1,
+    limit: number = 10,
+  ): Promise<{
+    data: Enrollment[];
+    total: number;
+    page: number;
+  }> {
     try {
-      const cachedEnrollments = await this.cacheManager.get<Enrollment[]>(
-        this.CACHE_KEY,
-      );
+      const cacheKey = `${this.CACHE_KEY_PREFIX}${page}_${limit}`;
+      const cachedEnrollments = await this.cacheManager.get<{
+        data: Enrollment[];
+        total: number;
+      }>(cacheKey);
       if (cachedEnrollments) {
         console.log('⚡ Fetching enrollments from cache');
-        return cachedEnrollments;
+        return { ...cachedEnrollments, page };
       }
-
       console.log('🔍 Fetching enrollments from database');
-      const enrollments = await this.enrollmentsRepository.find();
+      const [enrollments, total] =
+        await this.enrollmentsRepository.findAndCount({
+          skip: (page - 1) * limit,
+          take: limit,
+        });
 
       try {
-        await this.cacheManager.set(this.CACHE_KEY, enrollments, 60 * 1000);
+        await this.cacheManager.set(
+          cacheKey,
+          {
+            data: enrollments,
+            total,
+          },
+          60 * 1000,
+        );
         console.log('💾 Cached enrollments successfully');
       } catch (error) {
         console.error('❌ Failed to cache enrollments:', error.message);
       }
 
-      return enrollments;
+      return { data: enrollments, total, page };
     } catch (error) {
       console.error('❌ Error in findAll:', error.message);
-      return this.enrollmentsRepository.find();
+      return { data: [], total: 0, page };
     }
   }
 

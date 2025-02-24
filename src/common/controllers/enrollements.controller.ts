@@ -8,17 +8,23 @@ import {
   Param,
   Post,
   Put,
+  Query,
 } from '@nestjs/common';
 import { EnrollmentsService } from '../services/enrollment.service';
 import { Enrollment } from 'src/entities/enrollment.entity';
+import { Roles } from 'src/common/decorators/roles.decorator';
+import { Role } from 'src/common/constants/roles.enum';
 
 @Controller('enrollments')
 export class EnrollmentsController {
   constructor(private readonly enrollmentsService: EnrollmentsService) {}
 
   @Get()
-  async getAllEnrollment(): Promise<Enrollment[]> {
-    return this.enrollmentsService.getAllEnrollments();
+  async getAllEnrollment(
+    @Query('page') page: number = 1,
+    @Query('limit') limit: number = 10,
+  ) {
+    return this.enrollmentsService.getAllEnrollments(page, limit);
   }
 
   @Get(':id')

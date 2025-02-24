@@ -7,33 +7,54 @@ import { Cache, CACHE_MANAGER } from '@nestjs/cache-manager';
 @Injectable()
 export class SubjectsRepository {
   private readonly CACHE_KEY = 'all_subjects';
-
+  private readonly CACHE_KEY_PREFIX = 'subjects_page_';
   constructor(
     @InjectRepository(Subject)
     private subjectsRepository: Repository<Subject>,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 
-  async findAll(): Promise<Subject[]> {
+  async findAll(
+    page: number = 1,
+    limit: number = 10,
+  ): Promise<{
+    data: Subject[];
+    total: number;
+    page: number;
+  }> {
     try {
-      const cachedSubjects = await this.cacheManager.get<Subject[]>(
-        this.CACHE_KEY,
-      );
+      const cacheKey = `${this.CACHE_KEY_PREFIX}${page}_${limit}`;
+      const cachedSubjects = await this.cacheManager.get<{
+        data: Subject[];
+        total: number;
+      }>(cacheKey);
+
       if (cachedSubjects) {
         console.log('Fetching from cache');
-        return cachedSubjects;
+        return { ...cachedSubjects, page };
       }
       console.log('Fetching from database');
-      const subjects = await this.subjectsRepository.find();
+      const [subjects, total] = await this.subjectsRepository.findAndCount({
+        skip: (page - 1) * limit,
+        take: limit,
+      });
       try {
-        await this.cacheManager.set(this.CACHE_KEY, subjects, 60 * 1000);
+        await this.cacheManager.set(
+          cacheKey,
+          {
+            data: subjects,
+            total,
+          },
+          60 * 1000,
+        );
         console.log('Cased subjects successfully');
       } catch (error) {
         console.log('Failed to cache subjects', error.message);
       }
+      return { data: subjects, total, page };
     } catch (error) {
       console.log('Error to find all subjects', error.message);
-      return this.subjectsRepository.find();
+      return { data: [], total: 0, page };
     }
   }
 

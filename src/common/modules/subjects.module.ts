@@ -3,7 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { SubjectsController } from '../controllers/subjects.controller';
 import { SubjectsService } from '../services/subjects.service';
 import { Subject } from '../../entities/subject.entity';
-import { SubjectsRepository } from '../repositories/subjects.entity';
+import { SubjectsRepository } from '../repositories/subjects.repository';
 import { RedisModule } from 'src/common/modules/redis.module';
 
 @Module({
