@@ -7,8 +7,15 @@ import { Enrollment } from 'src/entities/enrollment.entity';
 export class EnrollmentsService {
   constructor(private readonly enrollmentsRepository: EnrollmentsRepository) {}
 
-  async getAllEnrollments(): Promise<Enrollment[]> {
-    return this.enrollmentsRepository.findAll();
+  async getAllEnrollments(
+    page: number,
+    limit: number,
+  ): Promise<{
+    data: Enrollment[];
+    total: number;
+    page: number;
+  }> {
+    return this.enrollmentsRepository.findAll(page, limit);
   }
 
   async getEnrollmentById(id: number): Promise<Enrollment> {

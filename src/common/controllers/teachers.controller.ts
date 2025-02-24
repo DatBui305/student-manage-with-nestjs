@@ -8,6 +8,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
 } from '@nestjs/common';
 import { TeachersService } from '../services/teachers.service';
 import { Teacher } from 'src/entities/teacher.entity';
@@ -17,8 +18,11 @@ export class TeachersController {
   constructor(private readonly teachersService: TeachersService) {}
 
   @Get()
-  async getAllTeacher(): Promise<Teacher[]> {
-    return this.teachersService.getAllTeachers();
+  async getAllTeacher(
+    @Query('page') page: number = 1,
+    @Query('limit') limit: number = 10,
+  ) {
+    return this.teachersService.getAllTeachers(Number(page), Number(limit));
   }
 
   @Get(':id')

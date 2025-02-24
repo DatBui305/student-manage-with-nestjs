@@ -7,8 +7,15 @@ import { Student } from '../../entities/student.entity';
 export class StudentsService {
   constructor(private readonly studentsRepository: StudentsRepository) {}
 
-  async getAllStudents(): Promise<Student[]> {
-    return this.studentsRepository.findAll();
+  async getAllStudents(
+    page: number,
+    limit: number,
+  ): Promise<{
+    data: Student[];
+    total: number;
+    page: number;
+  }> {
+    return this.studentsRepository.findAll(page, limit);
   }
 
   async getStudentById(id: number): Promise<Student> {

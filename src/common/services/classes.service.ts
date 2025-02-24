@@ -6,8 +6,15 @@ import { ClassesRepository } from '../repositories/classes.repository';
 @Injectable()
 export class ClassesService {
   constructor(private readonly classesRepository: ClassesRepository) {}
-  async getAllClasses(): Promise<Class[]> {
-    return this.classesRepository.findAll();
+  async getAllClasses(
+    page: number,
+    limit: number,
+  ): Promise<{
+    data: Class[];
+    total: number;
+    page: number;
+  }> {
+    return this.classesRepository.findAll(page, limit);
   }
 
   async getClassById(id: number): Promise<Class> {

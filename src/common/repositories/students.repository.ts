@@ -7,41 +7,49 @@ import { Cache, CACHE_MANAGER } from '@nestjs/cache-manager';
 @Injectable()
 export class StudentsRepository {
   private readonly CACHE_KEY = 'all_students';
-
+  private readonly CACHE_KEY_PREFIX = 'students_page_';
   constructor(
     @InjectRepository(Student)
     private studentsRepository: Repository<Student>,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 
-  async findAll(): Promise<Student[]> {
+  async findAll(
+    page: number = 1,
+    limit: number = 10,
+  ): Promise<{ data: Student[]; total: number; page: number }> {
     try {
-      const cachedStudents = await this.cacheManager.get<Student[]>(
-        this.CACHE_KEY,
-      );
-      if (cachedStudents) {
+      const cacheKey = `${this.CACHE_KEY_PREFIX}${page}_${limit}`;
+      const cachedData = await this.cacheManager.get<{
+        data: Student[];
+        total: number;
+      }>(cacheKey);
+
+      if (cachedData) {
         console.log('⚡ Fetching students from cache');
-        return cachedStudents;
+        return { ...cachedData, page };
       }
 
       console.log('🔍 Fetching students from database');
-      const students = await this.studentsRepository.find();
 
-      try {
-        await this.cacheManager.set(
-          this.CACHE_KEY,
-          students,
-          60 * 1000, // TTL in milliseconds
-        );
-        console.log('💾 Cached students successfully');
-      } catch (error) {
-        console.error('❌ Failed to cache students:', error.message);
-      }
+      // Tính toán offset để lấy dữ liệu
+      const [students, total] = await this.studentsRepository.findAndCount({
+        skip: (page - 1) * limit,
+        take: limit,
+      });
 
-      return students;
+      // Lưu vào cache với TTL 1 phút
+      await this.cacheManager.set(
+        cacheKey,
+        { data: students, total },
+        60 * 1000,
+      );
+      console.log('💾 Cached students successfully');
+
+      return { data: students, total, page };
     } catch (error) {
       console.error('❌ Error in findAll:', error.message);
-      return this.studentsRepository.find();
+      return { data: [], total: 0, page };
     }
   }
 

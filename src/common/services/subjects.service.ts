@@ -1,14 +1,21 @@
 // src/common/services/student.service.ts
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { SubjectsRepository } from '../repositories/subjects.entity';
+import { SubjectsRepository } from '../repositories/subjects.repository';
 import { Subject } from '../../entities/subject.entity';
 
 @Injectable()
 export class SubjectsService {
   constructor(private readonly subjectsRepository: SubjectsRepository) {}
 
-  async getAllSubjects(): Promise<Subject[]> {
-    return this.subjectsRepository.findAll();
+  async getAllSubjects(
+    page: number,
+    limit: number,
+  ): Promise<{
+    data: Subject[];
+    total: number;
+    page: number;
+  }> {
+    return this.subjectsRepository.findAll(page, limit);
   }
   async getSubjectById(id: number): Promise<Subject> {
     const Subject = await this.subjectsRepository.findById(id);

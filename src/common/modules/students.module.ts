@@ -5,9 +5,10 @@ import { StudentsService } from '../services/students.service';
 import { StudentsRepository } from '../repositories/students.repository';
 import { Student } from '../../entities/student.entity';
 import { RedisModule } from './redis.module';
+import { AuthModule } from 'src/auth/auth.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Student]), RedisModule],
+  imports: [TypeOrmModule.forFeature([Student]), RedisModule, AuthModule],
   controllers: [StudentsController],
   providers: [StudentsService, StudentsRepository],
   exports: [StudentsService, StudentsRepository],

@@ -8,6 +8,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
 } from '@nestjs/common';
 import { SubjectsService } from '../services/subjects.service';
 import { Subject } from '../../entities/subject.entity';
@@ -17,8 +18,11 @@ export class SubjectsController {
   constructor(private readonly subjectsService: SubjectsService) {}
 
   @Get()
-  async getAllSubjects(): Promise<Subject[]> {
-    return this.subjectsService.getAllSubjects();
+  async getAllSubjects(
+    @Query('page') page: number = 1,
+    @Query('limit') limit: number = 10,
+  ) {
+    return this.subjectsService.getAllSubjects(page, limit);
   }
   @Get(':id')
   async getSubjectById(@Param('id') id: number): Promise<Subject> {
