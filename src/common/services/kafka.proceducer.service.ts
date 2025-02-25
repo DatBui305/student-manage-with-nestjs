@@ -1,0 +1,26 @@
+import { Injectable } from '@nestjs/common';
+import { Kafka } from 'kafkajs';
+
+@Injectable()
+export class KafkaProducerService {
+  private kafka = new Kafka({
+    clientId: 'student-management',
+    brokers: ['localhost:9092'],
+  });
+  private producer = this.kafka.producer();
+
+  async connect() {
+    await this.producer.connect();
+  }
+
+  async sendMessage(topic: string, message: string) {
+    await this.producer.send({
+      topic,
+      messages: [{ value: message }],
+    });
+  }
+
+  async disconnect() {
+    await this.producer.disconnect();
+  }
+}

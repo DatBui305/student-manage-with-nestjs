@@ -13,6 +13,7 @@ import { RedisModule } from './common/modules/redis.module';
 import { StudentsModule } from './common/modules/students.module';
 import { AuthModule } from 'src/auth/auth.module';
 import { Admin } from 'src/entities/admin.entity';
+import { KafkaModule } from 'src/common/modules/kafka.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { Admin } from 'src/entities/admin.entity';
     EnrollmentsModule,
     RedisModule,
     AuthModule,
+    KafkaModule,
   ],
 })
 export class AppModule {}

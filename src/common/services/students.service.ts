@@ -2,10 +2,14 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { StudentsRepository } from '../repositories/students.repository';
 import { Student } from '../../entities/student.entity';
+import { KafkaProducerService } from './kafka.proceducer.service';
 
 @Injectable()
 export class StudentsService {
-  constructor(private readonly studentsRepository: StudentsRepository) {}
+  constructor(
+    private readonly studentsRepository: StudentsRepository,
+    private readonly kafkaProducer: KafkaProducerService,
+  ) {}
 
   async getAllStudents(
     page: number,
@@ -27,7 +31,12 @@ export class StudentsService {
   }
 
   async createStudent(studentData: Partial<Student>): Promise<Student> {
-    return this.studentsRepository.createStudent(studentData);
+    const student = await this.studentsRepository.createStudent(studentData);
+    await this.kafkaProducer.sendMessage(
+      'student-topic',
+      JSON.stringify(student),
+    );
+    return student;
   }
 
   async updateStudent(
