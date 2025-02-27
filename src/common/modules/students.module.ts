@@ -13,7 +13,7 @@ import { KafkaModule } from 'src/common/modules/kafka.module';
     TypeOrmModule.forFeature([Student]),
     RedisModule,
     AuthModule,
-    KafkaModule,
+    // KafkaModule,
   ],
   controllers: [StudentsController],
   providers: [StudentsService, StudentsRepository],

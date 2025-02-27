@@ -2,13 +2,13 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { StudentsRepository } from '../repositories/students.repository';
 import { Student } from '../../entities/student.entity';
-import { KafkaProducerService } from './kafka.proceducer.service';
+// import { KafkaProducerService } from './kafka.proceducer.service';
 
 @Injectable()
 export class StudentsService {
   constructor(
     private readonly studentsRepository: StudentsRepository,
-    private readonly kafkaProducer: KafkaProducerService,
+    // private readonly kafkaProducer: KafkaProducerService,
   ) {}
 
   async getAllStudents(
@@ -32,10 +32,10 @@ export class StudentsService {
 
   async createStudent(studentData: Partial<Student>): Promise<Student> {
     const student = await this.studentsRepository.createStudent(studentData);
-    await this.kafkaProducer.sendMessage(
-      'student-topic',
-      JSON.stringify(student),
-    );
+    // await this.kafkaProducer.sendMessage(
+    //   'student-topic',
+    //   JSON.stringify(student),
+    // );
     return student;
   }
 
@@ -43,9 +43,6 @@ export class StudentsService {
     id: number,
     updateData: Partial<Student>,
   ): Promise<Student> {
-    if (id !== updateData.id) {
-      throw new Error('ID in request must match ID in data');
-    }
     await this.getStudentById(id);
     return this.studentsRepository.updateStudent(id, updateData);
   }
