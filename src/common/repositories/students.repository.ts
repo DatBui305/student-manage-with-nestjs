@@ -6,7 +6,6 @@ import { Cache, CACHE_MANAGER } from '@nestjs/cache-manager';
 
 @Injectable()
 export class StudentsRepository {
-  private readonly CACHE_KEY = 'all_students';
   private readonly CACHE_KEY_PREFIX = 'students_page_';
   private readonly keyArray = [];
   constructor(
