@@ -7,8 +7,8 @@ import { Cache, CACHE_MANAGER } from '@nestjs/cache-manager';
 
 @Injectable()
 export class ClassesRepository {
-  private readonly CACHE_KEY = 'all_classes';
   private readonly CACHE_KEY_PREFIX = 'classes_page_';
+  private readonly keyArray = [];
   constructor(
     @InjectRepository(Class)
     private classesRepository: Repository<Class>,
@@ -31,6 +31,7 @@ export class ClassesRepository {
       }
       console.log('🔍 Fetching classes from database');
       const [classes, total] = await this.classesRepository.findAndCount({
+        relations: ['teacher'],
         skip: (page - 1) * limit,
         take: limit,
       });
@@ -67,6 +68,7 @@ export class ClassesRepository {
       console.log(`🔍 Fetching class ${id} from database`);
       const foundClass = await this.classesRepository.findOne({
         where: { id },
+        relations: ['teacher'],
       });
 
       if (foundClass) {
@@ -117,6 +119,14 @@ export class ClassesRepository {
     return false;
   }
   async clearCache(): Promise<void> {
-    await this.cacheManager.del(this.CACHE_KEY);
+    if (this.keyArray.length === 0) {
+      console.log('No keys to clear from cache.');
+      return;
+    }
+
+    for (const key of this.keyArray) {
+      await this.cacheManager.del(key);
+    }
+    // console.log('Cleared cache for keys:', this.keyArray);
   }
 }
