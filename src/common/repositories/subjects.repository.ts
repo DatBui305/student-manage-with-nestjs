@@ -6,8 +6,8 @@ import { Subject } from '../../entities/subject.entity';
 import { Cache, CACHE_MANAGER } from '@nestjs/cache-manager';
 @Injectable()
 export class SubjectsRepository {
-  private readonly CACHE_KEY = 'all_subjects';
   private readonly CACHE_KEY_PREFIX = 'subjects_page_';
+  private readonly keyArray = [];
   constructor(
     @InjectRepository(Subject)
     private subjectsRepository: Repository<Subject>,
@@ -35,6 +35,7 @@ export class SubjectsRepository {
       }
       console.log('Fetching from database');
       const [subjects, total] = await this.subjectsRepository.findAndCount({
+        relations: ['teacher', 'class'],
         skip: (page - 1) * limit,
         take: limit,
       });
@@ -67,7 +68,10 @@ export class SubjectsRepository {
         return cachedSubject;
       }
       console.log('Fetching subject from database');
-      const subject = await this.subjectsRepository.findOne({ where: { id } });
+      const subject = await this.subjectsRepository.findOne({
+        where: { id },
+        relations: ['teacher', 'class'],
+      });
       if (subject) {
         try {
           await this.cacheManager.set(cacheKey, subject, 60 * 1000);
@@ -107,6 +111,14 @@ export class SubjectsRepository {
   }
 
   async clearCache(): Promise<void> {
-    await this.cacheManager.del(this.CACHE_KEY);
+    if (this.keyArray.length === 0) {
+      console.log('No keys to clear from cache.');
+      return;
+    }
+
+    for (const key of this.keyArray) {
+      await this.cacheManager.del(key);
+    }
+    // console.log('Cleared cache for keys:', this.keyArray);
   }
 }
