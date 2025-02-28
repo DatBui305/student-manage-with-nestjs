@@ -21,8 +21,8 @@ import { RolesGuard } from '../guards/roles.guard';
 export class StudentsController {
   constructor(private readonly studentsService: StudentsService) {}
 
-  @Roles(Role.ADMIN)
-  @UseGuards(RolesGuard)
+  // @Roles(Role.ADMIN)
+  // @UseGuards(RolesGuard)
   @Get()
   async getStudents(
     @Query('page') page: number = 1,

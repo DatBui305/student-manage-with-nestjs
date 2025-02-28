@@ -21,7 +21,7 @@ export class EnrollmentsService {
   async getEnrollmentById(id: number): Promise<Enrollment> {
     const Enrollment = await this.enrollmentsRepository.findById(id);
     if (!Enrollment) {
-      throw new NotFoundException(`Enrollment with ID ${id} not found`);
+      throw new NotFoundException(`Enrollment with ID ${id} not found sssss`);
     }
     return Enrollment;
   }

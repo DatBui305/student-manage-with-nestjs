@@ -6,8 +6,8 @@ import { Cache, CACHE_MANAGER } from '@nestjs/cache-manager';
 
 @Injectable()
 export class StudentsRepository {
-  private readonly CACHE_KEY = 'all_students';
   private readonly CACHE_KEY_PREFIX = 'students_page_';
+  private readonly keyArray = [];
   constructor(
     @InjectRepository(Student)
     private studentsRepository: Repository<Student>,
@@ -20,6 +20,7 @@ export class StudentsRepository {
   ): Promise<{ data: Student[]; total: number; page: number }> {
     try {
       const cacheKey = `${this.CACHE_KEY_PREFIX}${page}_${limit}`;
+      this.keyArray.push(cacheKey);
       const cachedData = await this.cacheManager.get<{
         data: Student[];
         total: number;
@@ -106,6 +107,14 @@ export class StudentsRepository {
   }
 
   async clearCache(): Promise<void> {
-    await this.cacheManager.del(this.CACHE_KEY);
+    if (this.keyArray.length === 0) {
+      console.log('No keys to clear from cache.');
+      return;
+    }
+
+    for (const key of this.keyArray) {
+      await this.cacheManager.del(key);
+    }
+    // console.log('Cleared cache for keys:', this.keyArray);
   }
 }

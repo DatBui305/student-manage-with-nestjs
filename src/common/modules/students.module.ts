@@ -6,9 +6,15 @@ import { StudentsRepository } from '../repositories/students.repository';
 import { Student } from '../../entities/student.entity';
 import { RedisModule } from './redis.module';
 import { AuthModule } from 'src/auth/auth.module';
+import { KafkaModule } from 'src/common/modules/kafka.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Student]), RedisModule, AuthModule],
+  imports: [
+    TypeOrmModule.forFeature([Student]),
+    RedisModule,
+    AuthModule,
+    // KafkaModule,
+  ],
   controllers: [StudentsController],
   providers: [StudentsService, StudentsRepository],
   exports: [StudentsService, StudentsRepository],
