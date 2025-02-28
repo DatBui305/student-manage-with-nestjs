@@ -57,6 +57,7 @@ export class StudentsRepository {
   async findById(id: number): Promise<Student | null> {
     try {
       const cacheKey = `student:${id}`;
+      this.keyArray.push(cacheKey);
       const cachedStudent = await this.cacheManager.get<Student>(cacheKey);
       if (cachedStudent) {
         console.log('⚡ Fetching student from cache');

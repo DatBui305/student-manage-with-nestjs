@@ -24,6 +24,7 @@ export class SubjectsRepository {
   }> {
     try {
       const cacheKey = `${this.CACHE_KEY_PREFIX}${page}_${limit}`;
+      this.keyArray.push(cacheKey);
       const cachedSubjects = await this.cacheManager.get<{
         data: Subject[];
         total: number;
@@ -62,6 +63,7 @@ export class SubjectsRepository {
   async findById(id: number): Promise<Subject | null> {
     try {
       const cacheKey = `subject:${id}`;
+      this.keyArray.push(cacheKey);
       const cachedSubject = await this.cacheManager.get<Subject>(cacheKey);
       if (cachedSubject) {
         console.log('Fetching subject from cache');

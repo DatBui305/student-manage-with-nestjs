@@ -21,6 +21,7 @@ export class ClassesRepository {
   ): Promise<{ data: Class[]; total: number; page: number }> {
     try {
       const cacheKey = `${this.CACHE_KEY_PREFIX}${page}_${limit}`;
+      this.keyArray.push(cacheKey);
       const cachedClasses = await this.cacheManager.get<{
         data: Class[];
         total: number;
@@ -58,6 +59,7 @@ export class ClassesRepository {
 
   async findById(id: number): Promise<Class | null> {
     const cacheKey = `class_${id}`;
+    this.keyArray.push(cacheKey);
     try {
       const cachedClass = await this.cacheManager.get<Class>(cacheKey);
       if (cachedClass) {
