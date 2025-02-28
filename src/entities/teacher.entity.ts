@@ -6,6 +6,7 @@ import {
   OneToMany,
 } from 'typeorm';
 import { Subject } from './subject.entity';
+import { Class } from './class.entity';
 
 @Entity({ name: 'teachers' })
 export class Teacher {
@@ -26,4 +27,7 @@ export class Teacher {
 
   @OneToMany(() => Subject, (subject) => subject.teacher)
   subjects: Subject[];
+
+  @OneToMany(() => Class, (cls) => cls.teacher)
+  classes: Class[];
 }

@@ -1,5 +1,13 @@
-// src/entity/Class.ts
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  OneToMany,
+  JoinColumn,
+} from 'typeorm';
+import { Teacher } from './teacher.entity';
+import { Subject } from './subject.entity';
 
 @Entity({ name: 'classes' })
 export class Class {
@@ -9,6 +17,13 @@ export class Class {
   @Column({ unique: true })
   class_name: string;
 
-  @Column({ nullable: true })
-  teacher_id: number;
+  @ManyToOne(() => Teacher, (teacher) => teacher.classes, {
+    nullable: true,
+    onDelete: 'SET NULL',
+  })
+  @JoinColumn({ name: 'teacher_id' })
+  teacher: Teacher;
+
+  @OneToMany(() => Subject, (subject) => subject.class)
+  subjects: Subject[];
 }
