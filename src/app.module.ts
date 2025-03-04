@@ -34,7 +34,7 @@ import { KafkaModule } from 'src/common/modules/kafka.module';
     EnrollmentsModule,
     RedisModule,
     AuthModule,
-    // KafkaModule,
+    KafkaModule,
   ],
 })
 export class AppModule {}

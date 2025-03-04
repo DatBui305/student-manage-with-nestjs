@@ -2,13 +2,14 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { StudentsRepository } from '../repositories/students.repository';
 import { Student } from '../../entities/student.entity';
-// import { KafkaProducerService } from './kafka.proceducer.service';
+import { KafkaService } from 'src/common/services/kafka.service';
+import { NotificationMessage } from 'src/common/dto/notification.dto';
 
 @Injectable()
 export class StudentsService {
   constructor(
     private readonly studentsRepository: StudentsRepository,
-    // private readonly kafkaProducer: KafkaProducerService,
+    private readonly kafkaService: KafkaService,
   ) {}
 
   async getAllStudents(
@@ -36,6 +37,16 @@ export class StudentsService {
     //   'student-topic',
     //   JSON.stringify(student),
     // );
+    const notification = new NotificationMessage(
+      'Create new student successful',
+      `Student with id = ${student.id}`,
+      new Date().toISOString(),
+    );
+
+    await this.kafkaService.sendNotification(
+      'notification-topic',
+      notification,
+    );
     return student;
   }
 
