@@ -5,7 +5,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.use(
     cors({
-      origin: 'http://localhost:4000', // Cho phép Next.js gọi API
+      origin: 'http://localhost:4000', // Địa chỉ của ứng dụng Next.js
       credentials: true, // Nếu có cookie hoặc auth header
     }),
   );
