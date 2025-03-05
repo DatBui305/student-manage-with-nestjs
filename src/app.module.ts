@@ -14,6 +14,7 @@ import { StudentsModule } from './common/modules/students.module';
 import { AuthModule } from 'src/auth/auth.module';
 import { Admin } from 'src/entities/admin.entity';
 import { KafkaModule } from 'src/common/modules/kafka.module';
+import { ChatStorageModule } from 'src/common/modules/chat-storage.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { KafkaModule } from 'src/common/modules/kafka.module';
     RedisModule,
     AuthModule,
     KafkaModule,
+    ChatStorageModule,
   ],
 })
 export class AppModule {}
