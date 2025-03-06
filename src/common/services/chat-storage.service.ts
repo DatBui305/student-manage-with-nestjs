@@ -1,15 +1,14 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { ChatStorageRepository } from '../repositories/chat-storage.repository';
+import { AdminRepository } from '../repositories/admin.repository';
 import { ChatRoomRepository } from '../repositories/chat-room.repository';
 
 @Injectable()
 export class ChatStorageService {
-  constructor(
-    private readonly chatStorageRepository: ChatStorageRepository,
-    // private readonly adminRepository: AdminRepository,
-    private readonly chatRoomRepository: ChatRoomRepository,
-  ) {}
-
+  constructor(private readonly chatStorageRepository: ChatStorageRepository) {}
+  async createStorage(adminId: number) {
+    return this.chatStorageRepository.createStorageForAdmin(adminId);
+  }
   async getStorageByAdmin(adminId: number) {
     const storage = await this.chatStorageRepository.findByAdminId(adminId);
     if (!storage) {
@@ -17,26 +16,4 @@ export class ChatStorageService {
     }
     return storage;
   }
-
-  //   async createRoom(adminId: number, roomName: string) {
-  //     let storage = await this.chatStorageRepository.findByAdminId(adminId);
-
-  //     if (!storage) {
-  //       const admin = await this.adminRepository.findOne({ where: { id: adminId } });
-  //       if (!admin) {
-  //         throw new NotFoundException('Admin not found');
-  //       }
-
-  //       storage = this.chatStorageRepository.create({ admin, rooms: [] });
-  //       await this.chatStorageRepository.save(storage);
-  //     }
-
-  //     const newRoom = this.chatRoomRepository.create({ name: roomName, chatStorage: storage });
-  //     return this.chatRoomRepository.save(newRoom);
-  //   }
-
-  //   async getAllRooms(adminId: number) {
-  //     const storage = await this.getStorageByAdmin(adminId);
-  //     return this.chatRoomRepository.findRoomsByStorageId(storage.id);
-  //   }
 }

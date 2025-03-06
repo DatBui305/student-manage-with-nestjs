@@ -17,11 +17,6 @@ export class ChatStorage {
   @OneToOne(() => Admin, (admin) => admin.chatStorage)
   admin: Admin;
 
-  @OneToMany(() => ChatRoom, (room) => room.chatStorage, {
-    cascade: true,
-  })
-  rooms: ChatRoom[];
-
   @CreateDateColumn()
   createdAt: Date;
 

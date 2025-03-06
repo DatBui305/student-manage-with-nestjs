@@ -7,14 +7,10 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
-
 @Entity({ name: 'messages' })
 export class Message {
   @PrimaryGeneratedColumn()
   id: number;
-
-  @Column()
-  sender: string;
 
   @Column()
   content: string;

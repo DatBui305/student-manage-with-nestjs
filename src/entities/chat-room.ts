@@ -16,10 +16,13 @@ export class ChatRoom {
   id: number;
 
   @Column()
-  name: string; // Example: 'support-room-123'
+  name: string;
 
-  @ManyToOne(() => ChatStorage, (chatStorage) => chatStorage.rooms)
-  chatStorage: ChatStorage;
+  @ManyToOne(() => ChatStorage)
+  chatStorage1: ChatStorage;
+
+  @ManyToOne(() => ChatStorage)
+  chatStorage2: ChatStorage;
 
   @OneToMany(() => Message, (message) => message.room, {
     cascade: true,
