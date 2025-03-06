@@ -14,6 +14,13 @@ import { StudentsModule } from './common/modules/students.module';
 import { AuthModule } from 'src/auth/auth.module';
 import { Admin } from 'src/entities/admin.entity';
 import { KafkaModule } from 'src/common/modules/kafka.module';
+import { ChatRoom } from 'src/entities/chat-room';
+import { ChatStorage } from 'src/entities/chat-storage.entity';
+import { Message } from 'src/entities/message.entity';
+import { AdminModule } from 'src/common/modules/admin.module';
+import { ChatStorageModule } from 'src/common/modules/chat-storage.module';
+import { ChatRoomModule } from 'src/common/modules/chat-room.module';
+import { MessageModule } from 'src/common/modules/message.module';
 
 @Module({
   imports: [
@@ -24,7 +31,17 @@ import { KafkaModule } from 'src/common/modules/kafka.module';
       username: 'postgres',
       password: '30052003',
       database: 'student_management',
-      entities: [Student, Class, Enrollment, Teacher, Subject, Admin],
+      entities: [
+        Student,
+        Class,
+        Enrollment,
+        Teacher,
+        Subject,
+        Admin,
+        ChatRoom,
+        ChatStorage,
+        Message,
+      ],
       synchronize: true,
     }),
     StudentsModule,
@@ -34,7 +51,10 @@ import { KafkaModule } from 'src/common/modules/kafka.module';
     EnrollmentsModule,
     RedisModule,
     AuthModule,
-    KafkaModule,
+    AdminModule,
+    ChatStorageModule,
+    ChatRoomModule,
+    MessageModule,
   ],
 })
 export class AppModule {}
