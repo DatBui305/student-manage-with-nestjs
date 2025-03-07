@@ -5,9 +5,10 @@ import { ChatRoom } from 'src/entities/chat-room';
 import { MessageController } from 'src/common/controllers/message.controller';
 import { MessageRepository } from 'src/common/repositories/message.repository';
 import { MessageService } from 'src/common/services/message.service';
+import { ChatModule } from 'src/common/modules/chat.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([ChatRoom])],
+  imports: [TypeOrmModule.forFeature([ChatRoom]), ChatModule],
   controllers: [MessageController],
   providers: [MessageRepository, MessageService],
   exports: [MessageRepository, MessageService],

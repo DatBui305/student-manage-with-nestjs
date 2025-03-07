@@ -21,6 +21,7 @@ import { AdminModule } from 'src/common/modules/admin.module';
 import { ChatStorageModule } from 'src/common/modules/chat-storage.module';
 import { ChatRoomModule } from 'src/common/modules/chat-room.module';
 import { MessageModule } from 'src/common/modules/message.module';
+import { ChatModule } from 'src/common/modules/chat.module';
 
 @Module({
   imports: [
@@ -55,6 +56,7 @@ import { MessageModule } from 'src/common/modules/message.module';
     ChatStorageModule,
     ChatRoomModule,
     MessageModule,
+    ChatModule,
   ],
 })
 export class AppModule {}

@@ -11,4 +11,12 @@ export class ChatRoomService {
   async getRoomsByStorageId(storageId: number) {
     return this.chatRoomRepository.findRoomsByStorageId(storageId);
   }
+
+  async getRoomById(roomId: number) {
+    return this.chatRoomRepository.getRoomById(roomId);
+  }
+
+  async findRoomsByAdminId(adminId: number) {
+    return this.chatRoomRepository.findRoomsByAdminId(adminId);
+  }
 }
