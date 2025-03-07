@@ -18,7 +18,22 @@ export class ChatRoomRepository extends Repository<ChatRoom> {
       relations: ['messages'],
     });
   }
+  async getRoomById(roomId: number): Promise<ChatRoom> {
+    return this.findOne({
+      where: { id: roomId },
+      relations: ['messages'],
+    });
+  }
 
+  async findRoomsByAdminId(adminId: number): Promise<ChatRoom[]> {
+    return this.createQueryBuilder('room')
+      .leftJoinAndSelect('room.chatStorage1', 'storage1')
+      .leftJoinAndSelect('room.chatStorage2', 'storage2')
+      .leftJoin('storage1.admin', 'admin1')
+      .leftJoin('storage2.admin', 'admin2')
+      .where('admin1.id = :adminId OR admin2.id = :adminId', { adminId })
+      .getMany();
+  }
   async createRoom(
     storageId1: number,
     storageId2: number,
