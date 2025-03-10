@@ -4,8 +4,18 @@ import { MessageRepository } from 'src/common/repositories/message.repository';
 @Injectable()
 export class MessageService {
   constructor(private readonly messageRepository: MessageRepository) {}
-  async createMessage(content: string, roomId: number) {
-    return this.messageRepository.createMessage(content, roomId);
+  async createMessage(
+    content: string,
+    roomId: number,
+    receiverId: number,
+    senderId: number,
+  ) {
+    return this.messageRepository.createMessage(
+      content,
+      roomId,
+      receiverId,
+      senderId,
+    );
   }
 
   async updateMessage(id: number, content: string) {
