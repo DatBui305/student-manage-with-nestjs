@@ -14,12 +14,19 @@ import { MessageService } from 'src/common/services/message.service';
 export class MessageController {
   constructor(private readonly messageService: MessageService) {}
 
-  @Post('/:roomId')
+  @Post('/:roomId/receiver/:receiver/sender/:sender')
   async CreateMessage(
     @Param('roomId') roomId: number,
+    @Param('receiver') receiverId: number,
+    @Param('sender') senderID: number,
     @Body('content') content: string,
   ) {
-    return this.messageService.createMessage(content, roomId);
+    return this.messageService.createMessage(
+      content,
+      roomId,
+      receiverId,
+      senderID,
+    );
   }
 
   @Put('/:roomId')
